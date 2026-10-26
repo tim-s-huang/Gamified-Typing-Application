@@ -61,6 +61,7 @@ public static class PlayerData
         {"Complete the Game", false}
     };
 
+    // Checks whether all upgrades are max level for achievement
     public static bool CheckUpgradesMaxxed()
     {
         var max_upg_checks = new Dictionary<string, int>
@@ -82,6 +83,7 @@ public static class PlayerData
         return true;
     }
 
+    // Unlocks achievements if their condition is met
     public static void UnlockAchievements()
     {
         if(total_coins_alltime >= 1000 & !achieve_dict["1000 Total Coins"])
@@ -149,6 +151,7 @@ public static class PlayerData
             achieve_dict["All Upgrades Maxxed"] = true;
         }
 
+        // Checks whether all upgrades are at least level 1
         bool all_bought = upgrade_dict.Values.All(value => value != 0);
 
         if(all_bought & !achieve_dict["All Upgrades Bought"])
@@ -156,6 +159,7 @@ public static class PlayerData
             achieve_dict["All Upgrades Bought"] = true;
         }
 
+        // Checks if all other achievements have been unlocked
         bool all_achieve = achieve_dict.Values.Count(value => value == false) <= 1;
 
         if(all_achieve & !achieve_dict["Complete the Game"])

@@ -9,6 +9,7 @@ public class RankingManager : MonoBehaviour
     public TextMeshProUGUI company_ranking_text;
     public TextMeshProUGUI level_ranking_text;
 
+    // Company class for elements in leaderboard
     private class Company
     {
         public string name;
@@ -23,6 +24,7 @@ public class RankingManager : MonoBehaviour
 
     private List<Company> company_leaderboard;
 
+    // Updates and sets leaderboard to decreasing ranking from top
     private void UpdateLeaderboard()
     {
         foreach(Company company in company_leaderboard)
@@ -36,6 +38,7 @@ public class RankingManager : MonoBehaviour
         company_leaderboard.Sort((a,b) => b.level.CompareTo(a.level));
     }
 
+    // Displays all text to the leaderboard
     private void DisplayLeaderboard()
     {
         StringBuilder company_name_text = new StringBuilder();
@@ -53,6 +56,7 @@ public class RankingManager : MonoBehaviour
    
     void Start()
     {
+        // Creates all the companies for the leaderboard
         company_leaderboard = new List<Company>
         {
             new Company("Ctrl Alt Elite", 9),

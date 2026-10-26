@@ -6,6 +6,7 @@ public class TypingHelpButton : MonoBehaviour
     public GameObject typing_tutorial;
     private bool tutorial_shown = false;
 
+    // Shows instructions image on screen
     public void PressTutorialButton()
     {
         tutorial_shown = true;
@@ -13,15 +14,15 @@ public class TypingHelpButton : MonoBehaviour
     }
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         typing_tutorial.SetActive(false);
     }
 
-    // Update is called once per frame
+
     void Update()
     {
+        // Hides instructions image upon any key press
         if(tutorial_shown)
         {
             if(Input.anyKeyDown)

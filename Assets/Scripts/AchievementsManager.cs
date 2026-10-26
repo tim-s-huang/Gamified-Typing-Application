@@ -12,6 +12,7 @@ public class AchievementsManager : MonoBehaviour
     {
         int index = 0;
 
+        // Loops through list of UI images and colors black if they are not unlocked
         foreach (UnityEngine.UI.Image trophy in trophy_sprites)
         {
             var entry = PlayerData.achieve_dict.ElementAt(index);
@@ -26,13 +27,11 @@ public class AchievementsManager : MonoBehaviour
         }
     }
     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         UpdateAchievements();
     }
 
-    // Update is called once per frame
     void Update()
     {
         PlayerData.UnlockAchievements();

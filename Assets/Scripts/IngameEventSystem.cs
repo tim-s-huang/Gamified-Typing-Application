@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +12,7 @@ public class IngameEventSystem : MonoBehaviour
     private float cooldown_duration = 180f;
     private float event_duration = 30f;
 
+    // 3 minute cooldown for triggering new events
     private IEnumerator EventCooldown()
     {
         cooldown_active = true;
@@ -20,6 +20,7 @@ public class IngameEventSystem : MonoBehaviour
         cooldown_active = false;
     }
 
+    // Activates the chosen event for 30 seconds by setting its boolean to true
     private IEnumerator EventDuration(string chosen_event)
     {
         if (chosen_event == "Gold Rush")
@@ -36,9 +37,11 @@ public class IngameEventSystem : MonoBehaviour
         gold_rush_active = false;
         precision_bonus_active = false;
 
+        // Activates the event cooldown for 3 minutes
         StartCoroutine(EventCooldown());
     }
 
+    // Starts the chosen event
     private void StartEvent(string chosen_event)
     {
         StartCoroutine(EventDuration(chosen_event));
@@ -61,12 +64,14 @@ public class IngameEventSystem : MonoBehaviour
 
     void Start()
     {
+        // Starts event cooldown
         StartCoroutine(EventCooldown());
     }
 
 
     void Update()
     {
+        // Checks which events are unlocked and picks a random event accordingly
         if(!cooldown_active && !gold_rush_active && !precision_bonus_active)
         {
             bool goldRushUnlocked = PlayerData.upgrade_dict["gold_rush"] == 1;

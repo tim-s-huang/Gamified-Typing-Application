@@ -24,6 +24,7 @@ public class ShopSystem : MonoBehaviour
     public AudioClip[] shop_sfx;
     private AudioSource audio_source;
 
+    // Updates all store upgrade button text
     public void UpdateUpgradeTexts()
     {
         int index = 0;
@@ -32,6 +33,7 @@ public class ShopSystem : MonoBehaviour
             int level = PlayerData.upgrade_dict[upgrade.Key];
             int price = upgrade.Value[level];
 
+            // Checks if upgrade is maxxed out and displays SOLD OUT if so
             if (price == 0)
             {
                 upgrade_maxxed[upgrade.Key] = true;
@@ -39,8 +41,8 @@ public class ShopSystem : MonoBehaviour
             }
             else
             {
+                // Formats the upgrade name, level and pricing then displays it
                 string upgrade_caption = $"{upgrade.Key.Replace("_", " ").ToUpper()}";
-
                 var leveled_upgrades = PlayerData.upgrade_dict.Keys.Take(4);
 
                 if(leveled_upgrades.Contains(upgrade.Key))
@@ -54,11 +56,13 @@ public class ShopSystem : MonoBehaviour
         }
     }
 
+    // Purchases an upgrade if player has enough coins
     public void BuyUpgrade(string upgrade_key)
     {
         int level = PlayerData.upgrade_dict[upgrade_key];
         int price = upgrade_prices[upgrade_key][level];
 
+        // Checks if player can afford upgrade
         if (upgrade_maxxed[upgrade_key] || PlayerData.coins < price)
         {
             audio_source.PlayOneShot(shop_sfx[1]);
@@ -66,6 +70,7 @@ public class ShopSystem : MonoBehaviour
         }
         else
         {
+            // Unlocks upgrade and deducts price from coins
             audio_source.PlayOneShot(shop_sfx[0]);
             PlayerData.coins -= price;
             PlayerData.upgrade_dict[upgrade_key] = level + 1;

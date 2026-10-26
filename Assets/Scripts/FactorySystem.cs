@@ -18,12 +18,12 @@ public class FactorySystem : MonoBehaviour
     public Sprite [] sprite_array;
     private SpriteRenderer sprite_renderer;
 
+    // Reads word list from streaming assets, splits into list of words and adds words from word bank
     public static string[] GenerateWordList()
     {
         string file_path = Path.Combine(Application.streamingAssetsPath, "Default.txt");
         List<string> word_list = new List<string>();
 
-        // Reads word list from the text file and splits into array 
         using(StreamReader streamReader = new StreamReader(file_path))
         {
             string text_contents = streamReader.ReadToEnd();
@@ -35,6 +35,7 @@ public class FactorySystem : MonoBehaviour
         return word_list.ToArray();
     }
 
+    // Unlocks a word bank by adding words from the streaming asset to the extra_list
     private void UnlockWordBank(string word_bank)
     {
         string file_path = Path.Combine(Application.streamingAssetsPath, word_bank + ".txt");
@@ -46,10 +47,12 @@ public class FactorySystem : MonoBehaviour
         }
     }
 
+    // Purchases a new word bank, unlocking it for use
     public void PurchaseWordBank()
     {
         var locked_banks = new Dictionary<string, int>();
 
+        // Loops through the word bank dictionary to identify locked word banks
         foreach (var item in PlayerData.bank_dict)
         {
             if (item.Value != 1)
@@ -58,20 +61,26 @@ public class FactorySystem : MonoBehaviour
             }
         }
 
+        // Checks if the player has locked word banks and enough coins, if so unlocks it
         if (locked_banks.Count > 0)
         {
             if (PlayerData.coins > word_bank_prices[PlayerData.factory_level - 1])
             {
                 PlayerData.coins -= word_bank_prices[PlayerData.factory_level - 1];
                 
+                // Randomly selects a locked word bank to unlock
                 System.Random rand = new System.Random();
                 int random_index = rand.Next(locked_banks.Count);
                 string random_key = new List<string>(locked_banks.Keys)[random_index];
+                
+                // Unlocks the word bank
                 PlayerData.bank_dict[random_key] = 1;
                 UnlockWordBank(random_key);
 
                 PlayerData.factory_level++;
                 audio_source.PlayOneShot(factory_sfx[0]);
+
+                // Displays the timed unlocked word bank message
                 StartCoroutine(ShowBankUnlock(random_key));
             }
             else
@@ -88,6 +97,7 @@ public class FactorySystem : MonoBehaviour
         UpdateFactorySprite();
     }
 
+    // Updates the factory upgrade button text
     private void UpdateButtonText()
     {
         if(PlayerData.factory_level != 10)
@@ -100,11 +110,13 @@ public class FactorySystem : MonoBehaviour
         }
     }
 
+    // Updates the factory sprite
     private void UpdateFactorySprite()
     {
         sprite_renderer.sprite = sprite_array[PlayerData.factory_level];
     }
 
+    // Displays text stating the word bank unlocked for 5 seconds
     private IEnumerator ShowBankUnlock(string bank_name)
     {
         unlock_bank_text.text = $"{bank_name.Replace("_", " ")} Words Unlocked!";
@@ -113,6 +125,7 @@ public class FactorySystem : MonoBehaviour
         SetAlpha(0f);
     }
 
+    // Changes the text color to display the word bank unlock message
     private void SetAlpha(float alpha)
     {
         Color color = unlock_bank_text.color;
@@ -122,6 +135,7 @@ public class FactorySystem : MonoBehaviour
     
     void Start()
     {
+        // Adds all unlocked word banks to word pool
         foreach (var item in PlayerData.bank_dict)
         {
             if (item.Value == 1)

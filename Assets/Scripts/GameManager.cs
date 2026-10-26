@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
         public List<float[]> records;
     }
 
+    // Saves all game data to playerprefs from PlayerData
     private void SaveGame()
     {
         PlayerPrefs.SetInt("words_typed_alltime", PlayerData.words_typed_alltime);
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Loads all game data from playerprefs to PlayerData
     private void LoadGame()
     {
         PlayerData.words_typed_alltime = PlayerPrefs.GetInt("words_typed_alltime", 0);
@@ -62,6 +64,7 @@ public class GameManager : MonoBehaviour
         PlayerData.bank_dict = new_bank_dict;
     }
 
+    // Resets all game data to default values
     public void ResetAllData()
     {
         PlayerData.words_typed_alltime = 0;
@@ -95,6 +98,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Saves game data upon quit
     private void OnApplicationQuit()
     {
         SaveGame();
@@ -102,6 +106,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        // Autosaves game data every 30 seconds
         if (instance == null)
         {
             instance = this;
@@ -120,5 +125,11 @@ public class GameManager : MonoBehaviour
         PlayerData.play_time += Time.deltaTime;
 
         PlayerData.UnlockAchievements();
+
+        // Testing function used to reset data
+        if(Input.GetKeyDown(KeyCode.F10) && Input.GetKeyDown(KeyCode.F9))
+        {
+            ResetAllData();
+        }
     }
 }

@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Gamified Tutorial_0: -5788890975216830583
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

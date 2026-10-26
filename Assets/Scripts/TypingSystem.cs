@@ -51,6 +51,7 @@ public class TypingSystem : MonoBehaviour
     private bool tracking_top_WPM = false;
     private int sentences_typed = 0;
 
+    // Gets the currency and event scripts to reference their variables and call their functions
     private void GetScripts()
     {
         GameObject currency = GameObject.Find("Currency Text");
@@ -60,12 +61,14 @@ public class TypingSystem : MonoBehaviour
         event_manager = events.GetComponent<IngameEventSystem>();
     }
 
+    // Geneates an array for coin character positions in the sentence
     private void CoinPosGenerator(int coin_amt)
     {
+        // Creates list of coin character positions and ensures they are unique
         List<int> valid_positions = new List<int>();
-        HashSet<int> coin_pos_set = new HashSet<int>(); // Ensures unique positions
+        HashSet<int> coin_pos_set = new HashSet<int>(); 
         
-        // Creates an array for all positions of a valid character - not whitespace
+        // Ensures coin character positions are not whitespace
         for(int i=0; i < typing_sentence.Length; i++)
         {
             if (typing_sentence[i] != space_char && typing_sentence[i] != return_char)
@@ -86,9 +89,10 @@ public class TypingSystem : MonoBehaviour
             coin_pos_set.Add(random_pos);
         }
 
-        coin_pos_array = coin_pos_set.ToList(); // Convert HashSet to List
+        coin_pos_array = coin_pos_set.ToList(); 
     }
 
+    // Calls gaincurrency if a coin character is typed
     private void CoinCharAwarder()
     {
         for (int i = 0; i < coin_pos_array.Count; i++)
@@ -108,7 +112,7 @@ public class TypingSystem : MonoBehaviour
     {
         string[] word_list = FactorySystem.GenerateWordList();
 
-        // Randomly appends words until it fills the size of the text box
+        // Randomly appends words and interpuncts to list until it fills the size of the text box
         while(sentence.Length < 27)
         {
             string word_to_add = word_list[UnityEngine.Random.Range(0, word_list.Length)];
@@ -118,6 +122,7 @@ public class TypingSystem : MonoBehaviour
             }
         }
 
+        // Adds enter symbol to end of sentence
         sentence.Remove(sentence.Length - 1, 1);
         sentence.Append(return_char);
         sentence.Append(' ');
@@ -135,8 +140,9 @@ public class TypingSystem : MonoBehaviour
 
         cursor_position = 0;
         sentence_char_correct_list.Clear();
-
         coin_pos_array.Clear();
+
+        // Checks whether gold rush event is active to determine number of coin characters to generate
         if(event_manager.gold_rush_active)
         {
             CoinPosGenerator(PlayerData.upgrade_dict["coin_frequency"] + 10);
@@ -152,42 +158,44 @@ public class TypingSystem : MonoBehaviour
 
 
     private void KeyPressValidator()
+{
+    if (cursor_position >= typing_sentence.Length) return; // Prevent overflow
+
+    char cursor_char = typing_sentence[cursor_position];
+
+    if (Input.anyKeyDown)
     {
-        // Code for validating key presses from: https://discussions.unity.com/t/find-out-which-key-was-pressed/616242/16
-        char cursor_char = typing_sentence[cursor_position];
-
-        // Checks which keycode corresponds if there is an input, then saves the keycode to a char
-        if (Input.anyKeyDown)
+        foreach (KeyCode keyCode in keyCodes)
         {
-            foreach (KeyCode keyCode in keyCodes)
+            if (Input.GetKeyDown(keyCode))
             {
-                if (Input.GetKeyDown(keyCode)) {
-                    char char_typed = GetCharacterFromKeyCode(keyCode);
-                    total_chars_a_second++;
-                    PlayerData.total_chars_typed++;
+                char char_typed = GetCharacterFromKeyCode(keyCode);
 
-                    if (!timer_active)
-                    {
-                        timer_active = true;
-                    }
+                // Ignore unmapped keys
+                if (char_typed == '\0') break;
 
-                    // Checks if character is correct, incorrect or invalid
-                    if (char_typed == cursor_char)
-                    { 
-                        CharTypedCorrect(char_typed);
-                    }
-                    else if(char_typed == '\0')
-                    {
-                        break;
-                    }
-                    else if (!is_error_pause)
-                    {
-                        CharTypedIncorrect();
-                    }
+                total_chars_a_second++;
+                PlayerData.total_chars_typed++;
+
+                if (!timer_active)
+                    timer_active = true;
+
+                // Treat Space as return only if the current cursor expects return_char
+                bool isCorrect = (char_typed == cursor_char) ||
+                                 (cursor_char == return_char && char_typed == space_char);
+
+                if (isCorrect)
+                {
+                    CharTypedCorrect(cursor_char); // Pass cursor_char, not char_typed
+                }
+                else if (!is_error_pause)
+                {
+                    CharTypedIncorrect();
                 }
             }
         }
     }
+}
 
 
     // Converts KeyCode to character
@@ -228,7 +236,7 @@ public class TypingSystem : MonoBehaviour
         }
     }
 
-
+    // Handles behaviour when user types a correct character
     private void CharTypedCorrect(char char_typed)
     {
         cursor_position++;
@@ -236,9 +244,11 @@ public class TypingSystem : MonoBehaviour
         sentence_char_correct_list.Add(1);
         PlayerData.total_correct_chars++;
 
+        // If typed character is a space or return, increments total words typed
         if(char_typed == space_char || char_typed == return_char)
         {
             PlayerData.words_typed_alltime++;
+            // Awards currency for correctly typed word if precision bonus event is active
             if(event_manager.precision_bonus_active && WasLastWordCorrect())
             {
                 PlayerData.coins += 5;
@@ -249,22 +259,26 @@ public class TypingSystem : MonoBehaviour
         CoinCharAwarder();
     }
 
+    // Checks if last word was typed correctly - only used during precision bonus event
     private bool WasLastWordCorrect()
     {
         if (cursor_position == 0) return false; 
 
         int start = cursor_position - 1;
 
+        // Moves back to find start of word - indicated by space or return
         while (start > 0 && typing_sentence[start] != space_char && typing_sentence[start] != return_char)
         {
             start--;
         }
 
+        // Adjusts start position to first character of word
         if (typing_sentence[start] == space_char || typing_sentence[start] == return_char)
         {
             start++;
         }
 
+        // Checks each character of the last word for correctness
         for (int i = start; i < cursor_position; i++)
         {
             if (sentence_char_correct_list[i] != 1) 
@@ -276,6 +290,7 @@ public class TypingSystem : MonoBehaviour
         return true;
     }
 
+    // Pauses user inputs for 0.2 seconds after an incorrectly typed character
     IEnumerator PauseAfterMistake()
     {
         is_error_pause = true;
@@ -285,7 +300,7 @@ public class TypingSystem : MonoBehaviour
         is_error_pause = false;
     }
 
-
+    // Handles behaviour when a user types an incorrect character
     private void CharTypedIncorrect()
     {
         audio_source.PlayOneShot(typing_sfx[1]);
@@ -300,6 +315,7 @@ public class TypingSystem : MonoBehaviour
 
     private void WPMCalculator()
     {
+        // Stops WPM calculation until 3 sentences have been typed
         if(sentences_typed < 3)
         {
             return;
@@ -323,6 +339,7 @@ public class TypingSystem : MonoBehaviour
         WPM = (total_correct_chars/5)/minutes_played;
         WPM = Mathf.Round(WPM * 10f) / 10f;
         
+        // Checks if WPM is higher than the correct top WPM
         if (WPM > PlayerData.top_wpm && !tracking_top_WPM && WPM < 170)
         {
             tracking_top_WPM = true;
@@ -330,6 +347,7 @@ public class TypingSystem : MonoBehaviour
             last_top_WPM_time = PlayerData.play_time;
         }
 
+        // Saves the highest WPM in the 3 seconds window as the new top WPM
         if (tracking_top_WPM)
         {
             interval_top_WPM = Mathf.Max(interval_top_WPM, WPM);
@@ -346,6 +364,12 @@ public class TypingSystem : MonoBehaviour
 
     private void AccuracyCalculator()
     {
+        // Caps Accuracy measurement at last 100 seconds of typing
+        if(total_chars_list.Count == 101)
+        {
+            total_chars_list.RemoveAt(0);
+        }
+
         // Calculates accuracy using formula from 2.2.2
         float total_correct_chars = correct_chars_list.Sum();
         float total_chars_typed = total_chars_list.Sum();
@@ -354,7 +378,7 @@ public class TypingSystem : MonoBehaviour
         accuracy = Mathf.Round(accuracy * 10f) / 10f;
     }
 
-
+    // Tracks and calculates performance metrics every second
     private void StatTimer()
     {
         timer += Time.deltaTime;
@@ -375,41 +399,40 @@ public class TypingSystem : MonoBehaviour
         }
     }
 
-    private string CharColorer(string display_text) // - from ChatGPT
+    // Colours all characters for typing feedback
+    private string CharColorer(string display_text)
     {
         string colored_text = "";
 
-        // Loop through all characters in the display text
         for (int i = 0; i < display_text.Length; i++)
         {
-            // Check if the character should be gold (yellow) while the cursor hasn't passed it
+            // Check if the character should be yellow while the cursor hasn't passed it
             bool isGold = coin_pos_array.Contains(i) && cursor_position <= i && !sentence_char_correct_list.Contains(i);
 
-            // Default color is white
+            // Sets default character color was white
             string color_hex = UnityEngine.ColorUtility.ToHtmlStringRGB(Color.white);
 
-            // If it's a gold character, color it yellow (gold)
+            // Colors coin characters gold
             if (isGold)
             {
                 color_hex = UnityEngine.ColorUtility.ToHtmlStringRGB(Color.yellow);
             }
-            // If the cursor has passed this character, check if it's typed correctly or incorrectly
+            // Checks if characters after cursor are typed correctly or incorrectly
             else if (i < cursor_position)
             {
-                // Check if it's correctly typed (gray color for correct characters)
                 color_hex = (sentence_char_correct_list[i] == 1)
                     ? UnityEngine.ColorUtility.ToHtmlStringRGB(correct_color)
-                    : UnityEngine.ColorUtility.ToHtmlStringRGB(incorrect_color); // Red for incorrect characters
+                    : UnityEngine.ColorUtility.ToHtmlStringRGB(incorrect_color);
             }
 
-            // Add the color to the character at position i
+            // Add the correct color to the character
             colored_text += $"<color=#{color_hex}>{display_text[i]}</color>";
         }
 
         return colored_text;
     }
 
-
+    // Updates all on screen text   
     private void UpdateTextDisplay()
     {
         string display_text = typing_sentence.ToString();
@@ -422,6 +445,7 @@ public class TypingSystem : MonoBehaviour
 
         GUI_color_overlay_text.text = CharColorer(display_text);
 
+        // Sets WPM value as N/A if 3 sentences have not been typed
         if(sentences_typed > 2)
         {
             GUI_WPM_text.text = $"WPM: {WPM.ToString()}";
@@ -436,12 +460,14 @@ public class TypingSystem : MonoBehaviour
         GUI_trail_sentence_a.text = trailing_sentence_A.ToString();
         GUI_trail_sentence_b.text = trailing_sentence_B.ToString();
 
+        // Displays text showing the amount of passive currency being earnt by coin generator upgrade
         if(PlayerData.upgrade_dict["coin_generator"] > 0)
         {
             CPS_text.gameObject.SetActive(true);
             CPS_text.text = $"{PlayerData.upgrade_dict["coin_generator"]} coins / 5 sec";
         }
 
+        // Displays text showing an upgrade is active
         if(event_manager.gold_rush_active)
         {
             event_text.text = "Gold Rush!!! +8 gold characters";
@@ -459,11 +485,13 @@ public class TypingSystem : MonoBehaviour
 
     void Awake()
     {
+        // Generates the first 3 sentences to display
         typing_sentence = GenerateSentence(new StringBuilder());
         trailing_sentence_A = GenerateSentence(new StringBuilder());
         trailing_sentence_B = GenerateSentence(new StringBuilder());
         audio_source = GetComponent<AudioSource>();
 
+        // Checks whether event is still active when player goes back to screen
         GetScripts();
         if(event_manager.gold_rush_active)
         {

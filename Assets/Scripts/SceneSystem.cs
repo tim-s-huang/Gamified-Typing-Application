@@ -14,6 +14,7 @@ public class SceneSystem : MonoBehaviour
     public UnityEngine.UI.Image right_arrow;
     public UnityEngine.UI.Image left_arrow;
 
+    // Unlocks access to a screen if upgrade has been purchased
     private void UpdateUnlockStatus()
     {
         if (initialLoadComplete)
@@ -24,11 +25,13 @@ public class SceneSystem : MonoBehaviour
         scene_2_locked = PlayerData.upgrade_dict["rankings"] != 1;
     }
 
+    // Checks whether a screen is locked if trying to navigate to it
     private bool IsSceneLocked(int scene_index)
     {
         return (scene_index == 0 && scene_0_locked) || (scene_index == 2 && scene_2_locked);
     }
 
+    // Enables/Disables the UI arrows on screen depending on navigation options
     private void UpdateArrowVisibility()
     {
         if(scene_index == 0 || scene_index == 1 && scene_0_locked)
@@ -50,6 +53,7 @@ public class SceneSystem : MonoBehaviour
         }
     }
 
+    // Switches screen one to the left if it is unlocked
     public void SwitchSceneRight()
     {
         UpdateUnlockStatus();
@@ -62,6 +66,7 @@ public class SceneSystem : MonoBehaviour
         SceneManager.LoadScene(scene_index);
     }
 
+    // Switches screen one to the left if it is unlocked
     public void SwitchSceneLeft()
     {
         UpdateUnlockStatus();
@@ -79,6 +84,7 @@ public class SceneSystem : MonoBehaviour
         SceneManager.LoadScene(scene_index);
     }
 
+    // Allows quitting the game from the Unity Editor
     public void QuitGame()
     {
         #if UNITY_EDITOR
@@ -90,6 +96,7 @@ public class SceneSystem : MonoBehaviour
     
     private void Awake()
     {
+        // Loads all the scenes and moves player to the typing screen upon launch
         if (instance == null)
         {
             instance = this;
@@ -114,18 +121,21 @@ public class SceneSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UpdateArrowVisibility();
+
+        // Switches screen one to the right on right arrow key press
         if (Input.GetKeyUp(KeyCode.RightArrow) && scene_index != 5)
         {
             SwitchSceneRight();
-            UpdateArrowVisibility();
         }
 
+        // Switches screen one to the left on left arrow key press
         if (Input.GetKeyUp(KeyCode.LeftArrow) && scene_index != 0)
         {
             SwitchSceneLeft();
-            UpdateArrowVisibility();
         }
 
+        // Exits application upon pressing escape
         if (Input.GetKeyUp(KeyCode.Escape))
         {
             QuitGame();

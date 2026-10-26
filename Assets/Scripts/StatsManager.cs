@@ -10,6 +10,7 @@ public class StatsManager : MonoBehaviour
     public TextMeshProUGUI total_coins_text;
     public TextMeshProUGUI total_acc_text;
 
+    // Converts total playtime to H:M:S format
     private string ConvertPlaytime(float playtime)
     {
         int hours = Mathf.FloorToInt(playtime / 3600);
@@ -19,6 +20,7 @@ public class StatsManager : MonoBehaviour
         return string.Format("{0:D2}:{1:D2}:{2:D2}", hours, minutes, seconds);
     }
 
+    // Calculates total player accuracy
     private float TotalAccuracyCalculator()
     {
         float accuracy = ((float)PlayerData.total_correct_chars - PlayerData.total_errors)/PlayerData.total_chars_typed * 100;
@@ -26,6 +28,7 @@ public class StatsManager : MonoBehaviour
         return accuracy;
     }
 
+    // Displays all user stats to screen
     private void UpdateStats()
     {
         playtime_text.text = $"Playtime: {ConvertPlaytime(PlayerData.play_time)}";

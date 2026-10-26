@@ -1755,6 +1755,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Help Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 1177887908581659013, guid: a19d13293586c2347ba5442625eab911, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8759784576390067170, guid: a19d13293586c2347ba5442625eab911, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1958,7 +1962,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3758798965930721695, guid: 4b3dff96867dd834ea59e5782afd0934, type: 3}
       propertyPath: m_Name
-      value: Help Button Canvas
+      value: Button Canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6634291629036946890, guid: 4b3dff96867dd834ea59e5782afd0934, type: 3}
+      propertyPath: m_Color.b
+      value: 0.9528302
+      objectReference: {fileID: 0}
+    - target: {fileID: 6634291629036946890, guid: 4b3dff96867dd834ea59e5782afd0934, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9528302
+      objectReference: {fileID: 0}
+    - target: {fileID: 6634291629036946890, guid: 4b3dff96867dd834ea59e5782afd0934, type: 3}
+      propertyPath: m_Color.r
+      value: 0.9528302
       objectReference: {fileID: 0}
     - target: {fileID: 8597960210308543301, guid: 4b3dff96867dd834ea59e5782afd0934, type: 3}
       propertyPath: m_AnchoredPosition.x
