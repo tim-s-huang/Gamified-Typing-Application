@@ -6,11 +6,13 @@ A gamified typing trainer built in Unity (C#) for my BSc Computer Science Disser
 1. Download `Typing-Entrepreneur-Windows.zip` from the latest release
 2. Unzip it and run `Typing Entrepreneur.exe`
 3. If Windows shows "Windows protected your PC", click **More info → Run anyway**
-
+4. Steps 1-3 can be repeated for `Typing-Application-Control-Windows.zip` to run the non-gamified typing application
+   
 ## Features
 1. Idle Game Mechanics
 2. Real-time Typing Tracking with Stats
 3. Game Design Choices Modelled after Octalysis Framework
+4. User-led Progression that saves between Sessions
 
 ## Gameplay
 
