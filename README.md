@@ -14,5 +14,6 @@ A gamified typing trainer built in Unity (C#) for my BSc Computer Science Disser
 
 ## Gameplay
 
-<img width="700" alt="Typing Entrepreneur gameplay" src="https://github.com/user-attachments/assets/bff5d03c-16b2-4ae7-9965-98e8dbdb01af" />
+<img width="1911" height="1075" alt="Typing Entrepreneur" src="https://github.com/user-attachments/assets/2119c8a3-27d5-4900-b898-9aac58832b7b" />
+
 
