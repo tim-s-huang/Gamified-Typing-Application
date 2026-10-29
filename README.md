@@ -3,7 +3,7 @@
 A gamified typing trainer built in Unity (C#) for my BSc Computer Science Dissertation at Cardiff University, 2025. A study with 15 participants found that the gamified version significantly improved typing speed compared with a non-gamified version. Achieved a Distinction.
 
 ## How to Play (Windows)
-1. Download `Typing-Entrepreneur-Windows.zip` from the latest release
+1. Download `Typing-Entrepreneur-Windows.zip` from the [latest release](https://github.com/tim-s-huang/gamified-typing-application/releases/tag/v1.0)
 2. Unzip it and run `Typing Entrepreneur.exe`
 3. If Windows shows "Windows protected your PC", click **More info → Run anyway**
 4. Steps 1-3 can be repeated for `Typing-Application-Control-Windows.zip` to run the non-gamified typing application
